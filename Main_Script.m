@@ -21,30 +21,30 @@ clear;
 clc;
 close all;
 
-%% Import ASTOS and Feynman Outputs
+%% Import SIM and Feynman Outputs
 %Ensure you delete the first row with the random number in Feynman
-Feynman.Version='10';
+Feynman.Version='14';
 [Feynman.Data,Feynman.Header,Feynman.Raw]=xlsread('required_files/Feynman Outputs.xlsx',Feynman.Version,'A:C');
-[ASTOS.Data,ASTOS.Header,ASTOS.Raw]=xlsread('required_files/ASTOS Outputs.xlsx');
-
+%[ASTOS.Data,ASTOS.Header,ASTOS.Raw]=xlsread('required_files/F14_ASTOS_output.xlsx');
+[SIM.Data,SIM.Header,SIM.RAW] = xlsread('required_files/F14_sim_results_BETTER.xlsx');
 %% Rocket Dimensions and Lengths
-Rocket=RocketParameters(ASTOS,Feynman);
+Rocket=RocketParameters(SIM,Feynman);
 
 %% Global Parameters
-Global.Altitude=ASTOS.Data(:,find(matches(ASTOS.Header(2,:),'Altitude of Spaceshot at Earth')));
-Global.Time=ASTOS.Data(:,find(matches(ASTOS.Header(2,:),'Time')));
-Global.Thrust=ASTOS.Data(:,find(matches(ASTOS.Header(2,:),'Total Thrust of Spaceshot')));
-Global.Drag=ASTOS.Data(:,find(matches(ASTOS.Header(2,:),'Drag Force of Spaceshot')));
-Global.AxialAcceleration=ASTOS.Data(:,find(matches(ASTOS.Header(2,:),'Thrust Acceleration of Spaceshot')));
-Global.Density=ASTOS.Data(:,find(matches(ASTOS.Header(2,:),'Atmospheric Density of Spaceshot')));
-Global.Velocity=ASTOS.Data(:,find(matches(ASTOS.Header(2,:),'Flight Path Speed of Spaceshot')))*1000;
-Global.MachNumber=ASTOS.Data(:,find(matches(ASTOS.Header(2,:),'Mach Number of Spaceshot')));
+Global.Altitude=SIM.Data(:,find(matches(SIM.Header(1,:),'Altitude (m)')));
+Global.Time=SIM.Data(:,find(matches(SIM.Header(1,:),'Times (s)')));
+Global.Thrust=SIM.Data(:,find(matches(SIM.Header(1,:),'Thrust (N)')));
+Global.Drag=SIM.Data(:,find(matches(SIM.Header(1,:),'Drag (N)')));
+Global.AxialAcceleration=SIM.Data(:,find(matches(SIM.Header(1,:),'Acceleration (m/s**2)')));
+Global.Density=SIM.Data(:,find(matches(SIM.Header(1,:),'Air Density (kg/m**3)')));
+Global.Velocity=SIM.Data(:,find(matches(SIM.Header(1,:),'Velocity (m/s)')));
+Global.MachNumber=SIM.Data(:,find(matches(SIM.Header(1,:),'Mach Number')));
 
 %% Axial Loads
 Forces=AxialForce(Rocket,Global);
 
 %% Bending Loads
-Global.WindGustAssumption=10; %Assumed maximum wind gust at any altitude (m/s)
+Global.WindGustAssumption=15; %Assumed maximum wind gust at any altitude (m/s) Generally 9-15m/s pg 10
 Forces=BendingForce(Rocket,Global,Forces);
 
 %% Plot Values on Image

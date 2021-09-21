@@ -29,7 +29,7 @@ CumComponentMasses=cumsum(Rocket.ComponentMassesTime);
 
 %Calculate Forces
 Forces.Components=Rocket.Components;
-Forces.AxialLoad=Global.Drag'+(Global.AxialAcceleration'.*CumComponentMasses)./1000;
+Forces.AxialLoad=(Global.Drag' + (Global.AxialAcceleration'.*CumComponentMasses))/1000;
 
 %Delete value calculated at bottom of engine, as its not a real force
 Forces.AxialLoad(end,:)=[];

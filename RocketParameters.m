@@ -1,4 +1,4 @@
-function Rocket = RocketParameters(ASTOS, Feynman)
+function Rocket = RocketParameters(SIM, Feynman)
 %RocketParameters - Extracts information about the rocket design from ASTOS
 %and Feynman outputs
 %
@@ -42,39 +42,58 @@ Rocket.NumberOfFins=Feynman.Data(find(matches(Feynman.Header(:,1),"Number of Fin
 %% Create component array
 Rocket.Components=[...
     "Nose Cone and Payload - Nose Cone";
-    "Nose Cone and Payload - Payload Adapter";
     "Nose Cone and Payload - Payload";
     "Nose Cone and Payload - Nose Cone Interface Hull";
-    "Avionics and Recovery - Avionics";
-    "Avionics and Recovery - Recovery System";
-    "Avionics and Recovery - Avionics and Recovery Section Hull";
+    "Avionics - Batteries";
+    "Avionics - Boards and Sensors";
+    "Roll Control - RCS System";
+    "Roll Control - RCS Bay";
+    "Recovery - Chutes";
+    "Recovery - Recovery Hull";
+    "Recovery - Recovery Bay";
     "Pressurant - Pressurant Tank";
+    "Pressurant - Helium Gas";
     "Pressurant - Pressurant Section Hull";
+    "Pressurant - Pressurant LOX Interface Structure";
     "Pressurant - Pressurant LOX Interface Hull";
     "Liquid Oxygen - Liquid Oxygen Tank";
+    "Liquid Oxygen - LOX Kero Interface Structure";
     "Liquid Oxygen - LOX Kero Interface Hull";
     "Kerosene - Kerosene Tank";
+    "Kerosene - Thrust Structure";
     "Kerosene - Kero Engine Interface Hull";
-    "Propulsion - Engine"];
+    "Propulsion - Engine";
+    "Fins - Fins";
+    "Fins - Fin Can"];
 
 %% Component length contribution array 
-%'True' contributes to rocket length, 'False' does not
+%"True" contributes to rocket length, "False" does not
 Rocket.ComponentLengthContribution=[...
-    "True";
-    "False";
-    "False";
-    "False"; %True
-    "False";
-    "False";
-    "True";
-    "False";
-    "True";
-    "False"; %True 
-    "True";
-    "True";
-    "True";
-    "True";
-    "True"];
+    "True"; %"Nose Cone and Payload - Nose Cone";
+    'False'; %"Nose Cone and Payload - Payload";
+    'True'; %"Nose Cone and Payload - Nose Cone Interface Hull";
+    'False'; %"Avionics - Batteries";
+    'False'; %"Avionics - Boards and Sensors";
+    'False'; %"Roll Control - RCS System";
+    'True'; %"Roll Control - RCS Bay";
+    'False'; %"Recovery - Chutes";
+    'False'; %"Recovery - Recovery Hull";
+    'True'; %"Recovery - Recovery Bay";
+    'False'; %"Pressurant - Pressurant Tank";
+    'False'; %"Pressurant - Helium Gas";
+    'True'; %"Pressurant - Pressurant Section Hull";
+    'False'; %"Pressurant - Pressurant LOX Interface Structure";
+    'True'; %"Pressurant - Pressurant LOX Interface Hull";
+    'True'; %"Liquid Oxygen - Liquid Oxygen Tank";
+    'False'; %"Liquid Oxygen - LOX Kero Interface Structure";
+    'True'; %"Liquid Oxygen - LOX Kero Interface Hull";
+    'True'; %"Kerosene - Kerosene Tank";
+    'False'; %"Kerosene - Thrust Structure";
+    'True'; %"Kerosene - Kero Engine Interface Hull";
+    'False'; %"Propulsion - Engine";
+    'False'; %"Fins - Fins";
+    'True']; %"Fins - Fin Can"];
+    
     
 %% Component length array
 Rocket.ComponentLengths=zeros(length(Rocket.Components),1);
@@ -89,9 +108,6 @@ Rocket.ComponentMasses=zeros(length(Rocket.Components),1);
 for i=1:length(Rocket.Components)
     Rocket.ComponentMasses(i)=Feynman.Data(find(matches(Feynman.Header(:,1),strcat(Rocket.Components(i)," - Mass"))));
 end
- 
-%Manually fix 'Nose Cone Interface Hull' and 'Pressurant LOX Interface
-%Hull'
 
 %For components that do not contribute length, add their mass onto the next
 %section
@@ -109,12 +125,11 @@ Rocket.ComponentLengths(find(matches(Rocket.ComponentLengthContribution,"False")
 Rocket.ComponentPositions=cumsum(Rocket.ComponentLengths);
 Rocket.FinPosition=Rocket.ComponentPositions(find(matches(Rocket.Components,'Kerosene - Kerosene Tank'))); %Fin leading edge starts at the bottom of the Kero Tank
 
-
 %Calculate mass of LOX and Fuel based on OFRatio and flow rates
-PropellantMassFlow=ASTOS.Data(:,find(matches(ASTOS.Header(2,:),"Propellant Mass of Main_Stage of Spaceshot")));
+PropellantMass=max(SIM.Data(:,find(matches(SIM.Header(1,:),"Propellant Mass (kg)"))),0);
 OFRatio=Feynman.Data(find(matches(Feynman.Header(:,1),"OF")));
-Rocket.LOXMass=((PropellantMassFlow/(OFRatio+1))*OFRatio)';
-Rocket.KeroMass=(PropellantMassFlow/(OFRatio+1))';
+Rocket.LOXMass=((PropellantMass/(OFRatio+1))*OFRatio)';
+Rocket.KeroMass=(PropellantMass/(OFRatio+1))';
 
 %Add on the masses of LOX and Fuel as a function of time
 Rocket.ComponentMassesTime=repmat(Rocket.ComponentMasses,1,length(Rocket.LOXMass));

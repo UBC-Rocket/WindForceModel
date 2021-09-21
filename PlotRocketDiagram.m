@@ -19,32 +19,39 @@ function PlotRocketDiagram(Rocket,Forces)
 %
 %------------- BEGIN CODE --------------
 %% Display Image
-RocketDiagram=imread('RocketDiagram.png');
+RocketDiagram=imread('Wind Force Model Diagram.png');
 set(gcf,'color','w'); 
 imshow(RocketDiagram);
 
 %% Plot Component Names
-XPosition=[180 180 180 180 180 180 180 180];
-YPosition=[125 262 452 848 1089 1280 1462 1571];
+XPosition=[1100 1100 1100 1100 1100 1100 1100 1100 1100 1100 1100];
+YPosition=[170 300 340 405 510 600 770 940 1090 1230 1340];
 text(XPosition,YPosition,Forces.Components,'HorizontalAlignment','right')
 
+%% Text Placement Values
+col_1 = 1450;
+col_2 = 1650;
+col_3 = 1900;
+header_row = 140;
+rows = [280 320 370 430 565 615 910 960 1180 1260];
+
 %% Plot Axial Forces
-text(600,60,{'Max Axial','Force'},'Color','red','FontWeight','bold','HorizontalAlignment','Center');
-XPosition=[600 600 600 600 600 600 600];
-YPosition=[207 262 618 1033 1089 1398 1462];
+text(col_1,header_row,{'Max Axial','Force'},'Color','red','FontWeight','bold','HorizontalAlignment','Center');
+XPosition = [col_1 col_1 col_1 col_1 col_1 col_1 col_1 col_1 col_1 col_1];
+YPosition = rows;
 text(XPosition,YPosition,strcat(num2str(max(Forces.AxialLoad,[],2),4),' kN'),'Color','red','HorizontalAlignment','Center')
 
 %% Plot Shear Forces
-text(750,60,{'Max Shear','Force'},'Color','#EDB120','FontWeight','bold','HorizontalAlignment','Center');
-XPosition=[750 750 750 750 750 750 750];
-YPosition=[207 262 618 1033 1089 1398 1462];
+text(col_2,header_row,{'Max Shear','Force'},'Color','#EDB120','FontWeight','bold','HorizontalAlignment','Center');
+XPosition=[col_2 col_2 col_2 col_2 col_2 col_2 col_2 col_2 col_2 col_2];
+YPosition=rows;
 [~,XShear]=max(abs(Forces.Shear),[],2);
 text(XPosition,YPosition,strcat(num2str(diag(Forces.Shear(:,XShear))/1000,4),' kN'),'Color','#EDB120','HorizontalAlignment','Center');
 
 %% Plot Bending Forces
-text(900,60,{'Max Bending','Moment'},'Color','#77AC30','FontWeight','bold','HorizontalAlignment','Center');
-XPosition=[900 900 900 900 900 900 900];
-YPosition=[207 262 618 1033 1089 1398 1462];
+text(col_3,header_row,{'Max Bending','Moment'},'Color','#77AC30','FontWeight','bold','HorizontalAlignment','Center');
+XPosition=[col_3 col_3 col_3 col_3 col_3 col_3 col_3 col_3 col_3 col_3];
+YPosition=rows;
 [~,XBending]=max(abs(Forces.Bending),[],2);
 text(XPosition,YPosition,strcat(num2str(diag(Forces.Bending(:,XBending)),4),' Nm'),'Color','#77AC30','HorizontalAlignment','Center');
 %------------- END OF CODE --------------

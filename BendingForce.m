@@ -32,7 +32,7 @@ NoseconeLength=Rocket.ComponentLengths(find(matches(Rocket.Components,'Nose Cone
 NoseconeCalibre=NoseconeLength/Rocket.Diameter;
 
 %Interp lift curve for the correct nosecone calibre and mach number
-NoseconeLiftGradient=interp2(ESDU89008.NoseconeLiftCalibre,ESDU89008.NoseconeLiftMachNumber,ESDU89008.NoseconeLiftGradient,NoseconeCalibre,Global.MachNumber);
+NoseconeLiftGradient=interp2(ESDU89008.NoseconeLiftCalibre,ESDU89008.NoseconeLiftMachNumber,ESDU89008.NoseconeLiftGradient,NoseconeCalibre,Global.MachNumber,'spline');
 FinLiftGradient=interp1(ESDU89008.FinLiftMachNumber,ESDU89008.FinLiftGradient,Global.MachNumber,'linear',2.5);
 FinLiftCorrection=1+(Rocket.Diameter/2)/((Rocket.Diameter/2)+Rocket.FinSpan); %Barrowman Fin Lift correction K_T(B)
 FinLiftGradient=FinLiftGradient*FinLiftCorrection; %Corrected lift coefficient gradients
@@ -40,7 +40,7 @@ FinLiftGradient=FinLiftGradient*Rocket.FinArea*2/(pi*Rocket.Diameter^2/4);
 
 %% Center of Pressure
 %Calculate CP of nosecone and fins
-CP.Nosecone=(interp2(ESDU89008.NoseconeCPCalibre,ESDU89008.NoseconeCPMachNumber,ESDU89008.NoseconeCPCalibrePosition,NoseconeCalibre,Global.MachNumber)*NoseconeLength)'; %CP as measured from tip of nosecone (m)
+CP.Nosecone=(interp2(ESDU89008.NoseconeCPCalibre,ESDU89008.NoseconeCPMachNumber,ESDU89008.NoseconeCPCalibrePosition,NoseconeCalibre,Global.MachNumber,'spline')*NoseconeLength)'; %CP as measured from tip of nosecone (m)
 CP.Fins=(interp1(ESDU89008.FinCPMachNumber,ESDU89008.FinCPPosition,Global.MachNumber,'linear',0.47)*Rocket.FinRootChord+Rocket.FinPosition)';
 
 %% Lift Forces
@@ -56,6 +56,16 @@ Acc.Angular=(Global.WindGustAssumption./(2*Rocket.Ixx)).*Global.Density'.*Global
 Shear=-Acc.Lateral.*Rocket.ComponentMassesTime-Acc.Angular.*Rocket.ComponentMassesTime.*(Rocket.ComponentCG-Rocket.CG);
 Shear=[Shear;Lift.Nosecone;Lift.Fins];
 ShearPositions=[Rocket.ComponentCG;CP.Nosecone;CP.Fins];
+
+if sum(isnan(Rocket.ComponentCG)) > 0
+    error("CG not defined somewhere")
+end
+if sum(isnan(CP.Nosecone)) > 0
+    error("CP Nose not defined somewhere")
+end
+if sum(isnan(CP.Fins)) > 0
+    error("CP Fins defined somewhere")
+end
 [SortedShearPositions,SortedIndex]=sort(ShearPositions,1);
 for i=1:length(Global.Time)
     Shear(:,i)=Shear(SortedIndex(:,i),i);
