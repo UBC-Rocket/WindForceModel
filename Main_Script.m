@@ -44,9 +44,11 @@ Global.MachNumber=SIM.Data(:,find(matches(SIM.Header(1,:),'Mach Number')));
 Forces=AxialForce(Rocket,Global);
 
 %% Bending Loads
-Global.WindGustAssumption=15; %Assumed maximum wind gust at any altitude (m/s) Generally 9-15m/s pg 10
+Global.WindGustAssumption=9; %Assumed maximum wind gust at any altitude (m/s). See https://docs.google.com/document/d/1Wv5SpJzUQg2zge78pJnqNIuGVdg3IigyAu3tGeo02Qg/edit#
 Forces=BendingForce(Rocket,Global,Forces);
 
 %% Plot Values on Image
-PlotRocketDiagram(Rocket,Forces)
+axial_drag_uncertainty_factor = 1.4;
+structure_safety_factor = 1.4;
+PlotRocketDiagram(Rocket,Forces, structure_safety_factor, axial_drag_uncertainty_factor)
 %------------- END OF CODE --------------

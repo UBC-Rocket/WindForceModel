@@ -1,4 +1,4 @@
-function PlotRocketDiagram(Rocket,Forces,structure_safety_factor,axial_drag_uncertainty_factor)
+function PlotRocketDiagram(Rocket,Forces)
 %PlotRocketDiagram - Plots rocket forces on a diagram
 %
 % Syntax:  PlotRocketDiagram(Rocket,Forces)
@@ -18,6 +18,9 @@ function PlotRocketDiagram(Rocket,Forces,structure_safety_factor,axial_drag_unce
 % November 2020; Last revision: 21-Nov-2020
 %
 %------------- BEGIN CODE --------------
+%%
+structure_safety_factor = 1.4;
+axial_drag_uncertainty_factor = 1.4;
 %% Display Image
 RocketDiagram=imread('Wind Force Model Diagram.png');
 set(gcf,'color','w'); 
@@ -40,23 +43,19 @@ text(col_1,header_row,{'Max Axial','Force'},'Color','red','FontWeight','bold','H
 XPosition = [col_1 col_1 col_1 col_1 col_1 col_1 col_1 col_1 col_1 col_1];
 YPosition = rows;
 forces = max(Forces.AxialLoad,[],2);
-forces = forces.*axial_drag_uncertainty_factor.*structure_safety_factor;
-text(XPosition,YPosition,strcat(num2str(forces,4),' kN'),'Color','red','HorizontalAlignment','Center')
+text(XPosition,YPosition,strcat(num2str(max(Forces.AxialLoad,[],2),4),' kN'),'Color','red','HorizontalAlignment','Center')
 
 %% Plot Shear Forces
 text(col_2,header_row,{'Max Shear','Force'},'Color','#EDB120','FontWeight','bold','HorizontalAlignment','Center');
 XPosition=[col_2 col_2 col_2 col_2 col_2 col_2 col_2 col_2 col_2 col_2];
 YPosition=rows;
-forces=max(abs(Forces.Shear),[],2);
-forces = forces.*structure_safety_factor;
-text(XPosition,YPosition,strcat(num2str(forces/1000,4),' kN'),'Color','#EDB120','HorizontalAlignment','Center');
+[~,XShear]=max(abs(Forces.Shear),[],2);
+text(XPosition,YPosition,strcat(num2str(diag(Forces.Shear(:,XShear))/1000,4),' kN'),'Color','#EDB120','HorizontalAlignment','Center');
 
 %% Plot Bending Forces
 text(col_3,header_row,{'Max Bending','Moment'},'Color','#77AC30','FontWeight','bold','HorizontalAlignment','Center');
 XPosition=[col_3 col_3 col_3 col_3 col_3 col_3 col_3 col_3 col_3 col_3];
 YPosition=rows;
 [~,XBending]=max(abs(Forces.Bending),[],2);
-forces = diag(Forces.Bending(:,XBending));
-forces = forces.*structure_safety_factor;
-text(XPosition,YPosition,strcat(num2str(forces,4),' Nm'),'Color','#77AC30','HorizontalAlignment','Center');
+text(XPosition,YPosition,strcat(num2str(diag(Forces.Bending(:,XBending)),4),' Nm'),'Color','#77AC30','HorizontalAlignment','Center');
 %------------- END OF CODE --------------
