@@ -26,7 +26,7 @@ close all;
 Feynman.Version='14';
 [Feynman.Data,Feynman.Header,Feynman.Raw]=xlsread('required_files/Feynman Outputs.xlsx',Feynman.Version,'A:C');
 %[ASTOS.Data,ASTOS.Header,ASTOS.Raw]=xlsread('required_files/F14_ASTOS_output.xlsx');
-[SIM.Data,SIM.Header,SIM.RAW] = xlsread('required_files/F14_sim_results_BETTER.xlsx');
+[SIM.Data,SIM.Header,SIM.RAW] = xlsread('required_files/F15_sim_results.xlsx');
 %% Rocket Dimensions and Lengths
 Rocket=RocketParameters(SIM,Feynman);
 
@@ -48,7 +48,7 @@ Global.WindGustAssumption=9; %Assumed maximum wind gust at any altitude (m/s). S
 Forces=BendingForce(Rocket,Global,Forces);
 
 %% Plot Values on Image
-axial_drag_uncertainty_factor = 1.4;
-structure_safety_factor = 1.4;
+axial_drag_uncertainty_factor = 1.0;
+structure_safety_factor = 1.0;
 PlotRocketDiagram(Rocket,Forces, structure_safety_factor, axial_drag_uncertainty_factor)
 %------------- END OF CODE --------------
