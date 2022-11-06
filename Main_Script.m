@@ -23,10 +23,10 @@ close all;
 
 %% Import SIM and Feynman Outputs
 %Ensure you delete the first row with the random number in Feynman
-Feynman.Version='14';
+Feynman.Version='17';
 [Feynman.Data,Feynman.Header,Feynman.Raw]=xlsread('required_files/Feynman Outputs.xlsx',Feynman.Version,'A:C');
 %[ASTOS.Data,ASTOS.Header,ASTOS.Raw]=xlsread('required_files/F14_ASTOS_output.xlsx');
-[SIM.Data,SIM.Header,SIM.RAW] = xlsread('required_files/F15_sim_results.xlsx');
+[SIM.Data,SIM.Header,SIM.RAW] = xlsread('required_files/F17_sim_results.xlsx');
 %% Rocket Dimensions and Lengths
 Rocket=RocketParameters(SIM,Feynman);
 

@@ -46,8 +46,8 @@ Rocket.Components=[...
     "Nose Cone and Payload - Nose Cone Interface Hull";
     "Avionics - Batteries";
     "Avionics - Boards and Sensors";
-    "Roll Control - RCS System";
-    "Roll Control - RCS Bay";
+    %"Roll Control - RCS System";
+    %"Roll Control - RCS Bay";
     "Recovery - Chutes";
     "Recovery - Recovery Hull";
     "Recovery - Recovery Bay";
@@ -74,8 +74,8 @@ Rocket.ComponentLengthContribution=[...
     'True'; %"Nose Cone and Payload - Nose Cone Interface Hull";
     'False'; %"Avionics - Batteries";
     'False'; %"Avionics - Boards and Sensors";
-    'False'; %"Roll Control - RCS System";
-    'True'; %"Roll Control - RCS Bay";
+    %'False'; %"Roll Control - RCS System";
+    %'True'; %"Roll Control - RCS Bay";
     'False'; %"Recovery - Chutes";
     'False'; %"Recovery - Recovery Hull";
     'True'; %"Recovery - Recovery Bay";
